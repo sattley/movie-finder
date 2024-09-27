@@ -76,11 +76,6 @@ yarn build
 
 This will create an optimized build in the `.next` folder, ready to be deployed.
 
-### Additional Information
-
-- Ensure that you have a valid API key from the OMDB API to enable movie search functionality.
-- Make sure to set up any necessary environment variables before running the app.
-
 ## UI / UX Choices
 
 - My first consideration was that I wanted the layout to be responsive, so this really dictated my design decisions.

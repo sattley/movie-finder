@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# Movie Finder 🎥
+
+This is a little movie searching app called Movie Finder built using [Next.js](https://nextjs.org/), bootstrapped with `create-next-app`.
+
+The data is fetched from the OMDB database and I have a hard coded API key in the code that will reliably allow thousands of requests.
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to get the project up and running locally:
+
+### Prerequisites
+
+- Make sure you have [Node.js](https://nodejs.org/en/download/) installed on your system.
+- You also need [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) as your package manager.
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. **Navigate to the project directory**:
+
+   ```bash
+   cd movie-finder
+   ```
+
+3. **Install dependencies**:
+
+   If using npm:
+
+   ```bash
+   npm install
+   ```
+
+   Or with yarn:
+
+   ```bash
+   yarn install
+   ```
+
+### Running the Application
+
+To start the development server, run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or with yarn:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This will start the app at `http://localhost:3000` in development mode.
 
-## Learn More
+The main page of the app is located at `page.tsx` (or `home`), which is rendered at the base route `/`.
 
-To learn more about Next.js, take a look at the following resources:
+### Building for Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To build the app for production:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+```
 
-## Deploy on Vercel
+Or with yarn:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+yarn build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This will create an optimized build in the `.next` folder, ready to be deployed.
+
+### Additional Information
+
+- Ensure that you have a valid API key from the OMDB API to enable movie search functionality.
+- Make sure to set up any necessary environment variables before running the app.
+
+## UI / UX Choices
+
+- My first consideration was that I wanted the layout to be responsive, so this really dictated my design decisions.
+- I initially had just a row for each movie across all screen sizes, however this didn't look good.
+- Part of my motivations were that I wanted it to feel sleek and cool like a movie browsing site is, looking for a movie to watch should be fun!
+- So I switched to rendering the movies in a grid layout. This looked cool but then I realized that it was constraining when I wanted to show more information.
+- Fortunately towards the end I feel like the visual came together nicely to make the app usable enough for a prototype.
+- I did make a decision to have a type ahead search for the movie which is very common these days.
+- The opposite of this would be that the user explicitly enters the title in and then hits a Search button. That type of paradigm might be ok for older users but I think at this point most people are used to this.
+- If I had more time I would firm up that process, ie make it clearer that you can click a result in the type ahead and it will render it in the UI.
+- Lastly I added a few animations to make the app seem really joyful and delightful.
+- Oh I also want to add in a logo and a sort of empty state since the UI is pretty bare until you actually search and get results back.  

@@ -1,64 +1,116 @@
 "use client";
 
-import { mockMovies } from "./data/mockMovies";
-
-import { useState } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
+import { fetchMovies, fetchMovieDetails } from "./api/movieApi";
+import { Movie } from "./data/types";
+import { AnimatePresence } from "framer-motion";
 
 import SearchInput from "./components/SearchInput";
-import StarRating from "./components/StarRating";
+import MovieCard from "./components/movie/MovieCard";
 
 export default function Home() {
   const [movieQuery, setMovieQuery] = useState("");
+  const [movieResults, setMovieResults] = useState<Movie[]>([]);
+  const [moviesList, setMoviesList] = useState<Movie[]>([]);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMovieQuery(e.target.value);
   };
 
-  return (
-    <div className="container mx-auto max-w-screen-lg px-4">
-      
-      <SearchInput movieQuery={movieQuery} handleInputChange={handleInputChange} />
+  // Function to fetch movie details and update the our list of movies
+  const fetchMovieDetailsAndUpdateList = async (imdbID: string) => {
+    try {
+      const movieDetails = await fetchMovieDetails(imdbID);
+      // Update our list of movies with additional details like Plot and imdbRating
+      setMoviesList((prevMovies) =>
+        prevMovies.map((m) =>
+          m.imdbID === imdbID ? { ...m, ...movieDetails } : m
+        )
+      );
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+    }
+  };
 
-      {/* Let's display the query for testing purposes */}
-      {movieQuery && (
-        <p className="mt-2 text-gray-600">
-          You are searching for: {movieQuery}
-        </p>
-      )}
-      <div className="bg-list rounded-40 mt-8">
-        {mockMovies.map((movie) => (
-          <div
-            id="movieOuterRow"
-            className="flex items-stretch space-x-4 p-12 border-b-4 border-b-listRowBorder"
-          >
-            <div className="w-1/3 aspect-[2/3]">
-              <div className="relative">
-              <Image
-                src={movie.Poster}
-                objectFit="cover"
-                width={640}
-                height={960}
-                className="w-full h-auto rounded-12 shadow-poster"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
-                alt="Poster Image for Movie"
+  // Function that our dropdown/typeahead uses when you click on a movie title from dropdown/typeahead
+  const handleSelectedMovie = async (selectedMovie: Movie) => {
+    try {
+      const movieDetails = await fetchMovieDetails(selectedMovie.imdbID);
+      setMoviesList([movieDetails]);
+      setSelectedMovie(null);
+      setMovieResults([]);
+    } catch (err) {
+      console.error("Error fetching movie details:", err);
+    }
+  };
+
+  // Function that our MovieCard uses to show more information about a movie
+  const handleMoreInfo = async (imdbID: string) => {
+    await fetchMovieDetailsAndUpdateList(imdbID);
+  };
+
+  // Fetch movies logic triggered by user querying for a movie via the SearchInput component
+  useEffect(() => {
+    if (movieQuery.length > 2) {
+      fetchMovies(movieQuery)
+        .then((results) => {
+          // Populate our dropdown with search results
+          setMovieResults(results);
+          // Populate our list without the imdbRatings to start
+          setMoviesList(results);
+
+          // Now we can fetch the imdbRating for each movie in the list
+          results.forEach(async (movie: Movie) => {
+            try {
+              const details = await fetchMovieDetails(movie.imdbID);
+              setMoviesList((prevMovies) =>
+                prevMovies.map((m) =>
+                  m.imdbID === details.imdbID
+                    ? { ...m, imdbRating: details.imdbRating }
+                    : m
+                )
+              );
+            } catch (error) {
+              console.error(
+                "Error fetching IMDb rating for movie:",
+                movie.Title
+              );
+            }
+          });
+        })
+        .catch((err) => {
+          console.error("Error fetching movies:", err);
+        });
+    } else {
+      // Clear the dropdown and the movies list
+      setMovieResults([]);
+      setMoviesList([]);
+    }
+  }, [movieQuery]);
+
+  return (
+    <>
+      <SearchInput
+        movieQuery={movieQuery}
+        movieResults={movieResults}
+        setMovieResults={setMovieResults}
+        handleSearch={handleSearch}
+        handleSelectedMovie={handleSelectedMovie}
+      />
+      <div className="overflow-y-auto px-4 md:px-0 mt-8">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          <AnimatePresence>
+            {moviesList.map((movie: Movie) => (
+              <MovieCard
+                key={movie.imdbID}
+                movie={movie}
+                handleMoreInfo={handleMoreInfo}
               />
-              </div>
-            </div>
-            <div className="w-2/3 flex flex-col justify-between relative">
-              <div>
-                <h3 className="text-4xl font-bold text-white">{movie.Title}</h3>
-                <StarRating rating={6.4} />
-                <p className="text-sm text-white">{movie.Plot}</p>
-              </div>
-              <div className="text-sm text-gray-600">
-                <p>Release Date: {movie.Year}</p>
-                <p>Rating: {movie.Rated}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

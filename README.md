@@ -3,14 +3,18 @@
 
 This is a little movie searching app called Movie Finder built using [Next.js](https://nextjs.org/), bootstrapped with `create-next-app`.
 
-The data is fetched from the OMDB database and I have a hard coded API key in the code that will reliably allow thousands of requests.
-
 ## Getting Started
 
 Follow these steps to get the project up and running locally:
 
 ### Prerequisites
 
+
+- Make sure to create an .env.local file and add
+   ```bash
+   NEXT_PUBLIC_OMDB_API_KEY=get_an_omdb_api_key
+   ```
+  The api keys are free you just need to give them your email address
 - Make sure you have [Node.js](https://nodejs.org/en/download/) installed on your system.
 - You also need [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) as your package manager.
 

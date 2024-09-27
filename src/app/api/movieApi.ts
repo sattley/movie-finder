@@ -1,4 +1,4 @@
-const API_KEY = "ee5763c";
+const API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY;
 const BASE_URL = "http://www.omdbapi.com/";
 
 // Function to fetch limited movie details based on title param
